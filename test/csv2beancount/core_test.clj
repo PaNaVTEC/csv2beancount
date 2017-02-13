@@ -1,9 +1,10 @@
 (ns csv2beancount.core-test
   (:require [clojure.test :refer :all]
-            [csv2beancount.core :refer :all])
+            [csv2beancount.core :refer :all]
+            [clojure.java.io :as io])
   (:use clojure-csv.core))
 
-(testing "First column should be a date"
+(deftest first-column-should-be-a-date
   (let [rows (parse-csv "13/12/2089, Hola, Hola")
         first-row (first rows)
         first-field (first first-row)]
@@ -11,7 +12,15 @@
 
 (def help-output "  -c, --csv CSV  Csv Path\n  -h, --help\n")
 
-(testing "Main prints usage is invoked without arguments"
+(deftest main-prints-usage-is-invoked-without-arguments
   (let [console-output (with-out-str (-main ""))]
     (is (= console-output help-output))))
 
+(def single-transaction "2017-02-08 * \"RYMAN 1164\"\n  Account 38.48 GBP\n")
+
+(deftest single-line-csv-parses-a-transaction
+  (let [csv-file (-> "single_line_transaction.csv" io/resource io/file)
+        csv-path (.getAbsolutePath csv-file)
+        params (str "-c " csv-path)
+        console-output (with-out-str (-main params))]
+    (is (= console-output single-transaction))))
