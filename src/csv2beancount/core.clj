@@ -2,16 +2,16 @@
   (:require [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
 
-(def cli-options
+(def ^:private cli-options
   [["-c" "--csv CSV" "Csv Path"]
    ["-h" "--help"]])
 
-(def required-options #{:csv})
+(def ^:private required-options #{:csv})
 
-(defn missing-required? [options]
+(defn- missing-required? [options]
   (not-every? options required-options))
 
-(defn convert-csv [options]
+(defn- convert-csv [options]
   (println "Hola que ase"))
 
 (defn -main [& args]

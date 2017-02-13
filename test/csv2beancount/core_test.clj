@@ -15,4 +15,3 @@
   (let [console-output (with-out-str (-main ""))]
     (is (= console-output help-output))))
 
-(testing "")
