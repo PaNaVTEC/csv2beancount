@@ -14,14 +14,15 @@
 (defn- missing-required? [options]
   (not-every? options required-options))
 
-(defn- csv-exists? [file-path] (.exists (io/as-file file-path)))
+(defn- csv-not-exists? [path] (not (.exists (io/as-file path))))
 
 (defn- csv-path [options] (str/trim (:csv options)))
 
 (defn -main [& args]
   (let [{:keys [options _ summary _]} (parse-opts args cli-options)]
     (cond
-      (or (:help options) (missing-required? options)) (println summary)
-      (not (csv-exists? (csv-path options))) (println "The file provided in --csv argument does not exist")
+      (:help options) (println summary)
+      (missing-required? options) (println summary)
+      (csv-not-exists? (csv-path options)) (println "The file provided in --csv argument does not exist")
       :else (convert-csv (csv-path options)))))
 
