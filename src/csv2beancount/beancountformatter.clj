@@ -14,15 +14,16 @@
 
 (defn- to-beancount[transaction]
   (format beancount-transaction-format
-          (format-date (:date transaction)) (:desc transaction) "Account"
-          (:amount transaction) "GBP"))
+          (format-date (:date transaction)) (:desc transaction) 
+          (:account transaction) (:amount transaction) 
+          (:currency transaction)))
 
 (defn- write-transaction[transaction]
   (println (to-beancount transaction)))
 
 (defn- line-to-transaction[line]
   (let [[date _ _ desc amount & fields] (str/split line #",")]
-    (write-transaction {:date date :desc desc :amount amount})))
+    (write-transaction {:date date :desc desc :amount amount :account "Account" :currency "GBP"})))
 
 (defn convert-csv [options]
   (with-open [rdr (io/reader (str/trim (:csv options)))]
