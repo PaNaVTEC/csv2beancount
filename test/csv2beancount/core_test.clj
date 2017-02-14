@@ -23,4 +23,10 @@
         csv-path (.getAbsolutePath csv-file)
         params (str "-c " csv-path)
         console-output (with-out-str (-main params))]
-    (is (= console-output single-transaction))))
+  (is (= console-output single-transaction))))
+
+(deftest non-existing-file-should-output-that
+  (let [non-existing-file "whatever_non_existing_file.txt"
+       params (str "-c " non-existing-file)
+       console-output (with-out-str (-main params))]
+  (is (= console-output "The file provided in --csv argument does not exist\n"))))
