@@ -7,12 +7,15 @@
 
 (def ^:private beancount-formatter (f/formatter "yyyy-MM-dd"))
 
+(def ^:private beancount-transaction-format "%s * \"%s\"\n  %s %s %s")
+
 (defn- format-date[datestr]
   (f/unparse beancount-formatter (f/parse csv-formatter datestr)))
 
 (defn- to-beancount[transaction]
-  (str (format-date (:date transaction)) " * \"" (:desc transaction) "\"\n"
-       "  Account " (:amount transaction) " GBP"))
+  (format beancount-transaction-format
+          (format-date (:date transaction)) (:desc transaction) "Account"
+          (:amount transaction) "GBP"))
 
 (defn- write-transaction[transaction]
   (println (to-beancount transaction)))
