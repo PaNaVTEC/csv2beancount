@@ -18,5 +18,5 @@
     (if (or (:help options)
             (missing-required? options))
       (println summary)
-      (convert-csv options))))
+      (convert-csv (:csv options)))))
 

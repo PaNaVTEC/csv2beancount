@@ -25,7 +25,7 @@
   (let [[date _ _ desc amount & fields] (str/split line #",")]
     (write-transaction {:date date :desc desc :amount amount :account "Account" :currency "GBP"})))
 
-(defn convert-csv [options]
-  (with-open [rdr (io/reader (str/trim (:csv options)))]
+(defn convert-csv [file-path]
+  (with-open [rdr (io/reader (str/trim file-path))]
     (doseq [line (line-seq rdr)]
       (line-to-transaction line))))
