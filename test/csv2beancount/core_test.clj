@@ -34,3 +34,14 @@
         params {:options {:csv csv-path :yaml yml-path} :summary help-output }
         console-output (with-out-str (-run-program params))]
     (is (= console-output single-transaction))))
+
+(def default-account-transaction (str "2017-02-08 * \"DESC TRANSACTION\"\n"
+                                      "  Assets:UK:ClubLloyds 52.00 GBP\n"
+                                      "  Expenses:Unknown -52.00 GBP\n"))
+
+(deftest default-account-when-no-rules-match
+  (let [csv-path (-> "transaction_not_in_rules.csv" io/resource io/file .getAbsolutePath)
+        yml-path (-> "simple_transaction_rules.yaml" io/resource io/file .getAbsolutePath)
+        params {:options {:csv csv-path :yaml yml-path} :summary help-output }
+        console-output (with-out-str (-run-program params))]
+    (is (= console-output default-account-transaction))))

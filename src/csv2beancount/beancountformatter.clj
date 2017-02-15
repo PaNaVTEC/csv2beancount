@@ -28,26 +28,25 @@
     (str/blank? amount_in) (conj transaction {:amount1 (str "-" amount_out) :amount2 amount_out })
     (str/blank? amount_out) (conj transaction {:amount1 amount_in :amount2 (str "-" amount_in) })))
 
-(def not-nil? (complement nil?))
-
-(defn- associate-account [transaction rules]
+(defn- associate-account [transaction rules default-account]
   (let [possible-descriptions (keys rules)
         filtered-rules (filter #(.contains (:desc transaction) (key %)) rules)
         rule (if (not-empty filtered-rules) (val (first filtered-rules)))]
-    (conj transaction {:account2 (get rule "account")})))
+    (conj transaction {:account2 (get rule "account" default-account)})))
 
 (defn- line-to-transaction[line rules]
   (let [fields (str/split line #",")
         csv-rules (get rules "csv")
         currency (get csv-rules "currency")
         account (get csv-rules "processing_account")
+        default-account (get csv-rules "default_account")
         date (get fields (get csv-rules "date"))
         amount_in (get fields (get csv-rules "amount_in"))
         amount_out (get fields (get csv-rules "amount_out"))
         desc (get fields (get csv-rules "description"))
         transaction {:date date :desc desc :currency currency :account1 account}
         transaction-with-amount (associate-amounts transaction amount_in amount_out)
-        complete-transaction (associate-account transaction-with-amount (get rules "transactions"))]
+        complete-transaction (associate-account transaction-with-amount (get rules "transactions") default-account)]
     (write-transaction complete-transaction)))
 
 (defn convert-csv [file-path rules-path]

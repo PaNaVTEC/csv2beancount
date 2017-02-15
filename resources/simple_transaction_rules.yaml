@@ -1,0 +1,16 @@
+---
+csv:
+  date: 0
+  amount_in: 6
+  amount_out: 5
+  description: 4
+  processing_account: "Assets:UK:ClubLloyds"
+  default_account: "Expenses:Unknown"
+  currency: "GBP"
+transactions:
+  CODU:
+    account: "Income:UK:Codurance:Salary"
+    comment: "Salary paid from employer"
+  GIFFGAFF:
+    account: "Expenses:Communications:Mobile"
+
