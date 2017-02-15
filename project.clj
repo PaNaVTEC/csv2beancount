@@ -6,5 +6,6 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clojure-csv/clojure-csv "2.0.1"]
                  [org.clojure/tools.cli "0.3.5"]
+                 [io.forward/yaml "1.0.5"]
                  [clj-time "0.13.0"]]
   :main     csv2beancount.core)
