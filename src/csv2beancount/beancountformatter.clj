@@ -3,7 +3,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clj-time.format :as f]
-            [yaml.core :as yaml]))
+            [yaml.core :as yaml])
+  (:use clojure-csv.core))
 
 (def ^:private csv-formatter (f/formatter "dd/MM/yyyy"))
 
@@ -25,8 +26,8 @@
 
 (defn associate-amounts [transaction amount_in amount_out]
   (cond
-    (str/blank? amount_in) (conj transaction {:amount1 (str "-" amount_out) :amount2 amount_out })
-    (str/blank? amount_out) (conj transaction {:amount1 amount_in :amount2 (str "-" amount_in) })))
+    (str/blank? amount_in) (conj transaction {:amount1 (str "-" (str/trim amount_out)) :amount2 amount_out })
+    (str/blank? amount_out) (conj transaction {:amount1 amount_in :amount2 (str "-" (str/trim amount_in)) })))
 
 (defn- associate-account [transaction rules default-account]
   (let [possible-descriptions (keys rules)
@@ -35,7 +36,7 @@
     (conj transaction {:account2 (get rule "account" default-account)})))
 
 (defn- line-to-transaction[line rules]
-  (let [fields (str/split line #",")
+  (let [fields (first (parse-csv line))
         csv-rules (get rules "csv")
         currency (get csv-rules "currency")
         account (get csv-rules "processing_account")
