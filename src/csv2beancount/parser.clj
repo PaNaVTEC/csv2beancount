@@ -3,6 +3,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [csv2beancount.transaction-formatter :refer [to-beancount]]
+            [csv2beancount.transaction :refer [get-transaction]]
             [yaml.core :as yaml])
   (:use clojure-csv.core))
 
