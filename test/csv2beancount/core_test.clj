@@ -26,7 +26,7 @@
 
 (def single-transaction (str "2017-02-08 * \"CODURANCE\"\n"
                              "  Assets:UK:ClubLloyds 5000.00 GBP\n"
-                             "  Income:UK:Codurance:Salary -5000.00 GBP\n"))
+                             "  Income:UK:Codurance:Salary -5000.00 GBP\n\n"))
 
 (deftest single-line-csv-parses-a-transaction
   (let [csv-path (-> "single_line_transaction.csv" io/resource io/file .getAbsolutePath)
@@ -37,11 +37,18 @@
 
 (def default-account-transaction (str "2017-02-08 * \"DESC TRANSACTION\"\n"
                                       "  Assets:UK:ClubLloyds 52.00 GBP\n"
-                                      "  Expenses:Unknown -52.00 GBP\n"))
+                                      "  Expenses:Unknown -52.00 GBP\n\n"))
 
 (deftest default-account-when-no-rules-match
   (let [csv-path (-> "transaction_not_in_rules.csv" io/resource io/file .getAbsolutePath)
         yml-path (-> "simple_transaction_rules.yaml" io/resource io/file .getAbsolutePath)
+        params {:options {:csv csv-path :yaml yml-path} :summary help-output }
+        console-output (with-out-str (-run-program params))]
+    (is (= console-output default-account-transaction))))
+
+(deftest default-account-when-no-rules-match
+  (let [csv-path (-> "transaction_with_alternative_delimiter.csv" io/resource io/file .getAbsolutePath)
+        yml-path (-> "alternative_delimiter_rules.yaml" io/resource io/file .getAbsolutePath)
         params {:options {:csv csv-path :yaml yml-path} :summary help-output }
         console-output (with-out-str (-run-program params))]
     (is (= console-output default-account-transaction))))

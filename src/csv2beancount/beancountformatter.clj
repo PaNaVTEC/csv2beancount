@@ -10,7 +10,7 @@
 
 (def ^:private beancount-formatter (f/formatter "yyyy-MM-dd"))
 
-(def ^:private beancount-transaction-format "%s * \"%s\"\n  %s %s %s\n  %s %s %s")
+(def ^:private beancount-transaction-format "%s * \"%s\"\n  %s %s %s\n  %s %s %s\n")
 
 (defn- format-date [datestr]
   (f/unparse beancount-formatter (f/parse csv-formatter datestr)))
@@ -24,29 +24,36 @@
 (defn- write-transaction [transaction]
   (println (to-beancount transaction)))
 
-(defn associate-amounts [transaction amount_in amount_out]
-  (cond
-    (str/blank? amount_in) (conj transaction {:amount1 (str "-" (str/trim amount_out)) :amount2 amount_out })
-    (str/blank? amount_out) (conj transaction {:amount1 amount_in :amount2 (str "-" (str/trim amount_in)) })))
+(defn associate-amounts ([transaction amount_in amount_out]
+   (cond
+     (str/blank? amount_in) (conj transaction {:amount1 (str "-" (str/trim amount_out)) :amount2 amount_out })
+     (str/blank? amount_out) (conj transaction {:amount1 amount_in :amount2 (str "-" (str/trim amount_in)) })))
+  ([transaction amount] 
+   (let [trimmed-amount (str/trim amount)
+         is-negative (str/starts-with? trimmed-amount "-")
+         amount2 (if is-negative (subs amount 1) (str "-" trimmed-amount))]
+    (conj transaction {:amount1 amount :amount2 amount2}))))
 
 (defn- associate-account [transaction rules default-account]
-  (let [possible-descriptions (keys rules)
-        filtered-rules (filter #(.contains (:desc transaction) (key %)) rules)
+  (let [filtered-rules (filter #(.contains (:desc transaction) (key %)) rules)
         rule (if (not-empty filtered-rules) (val (first filtered-rules)))]
     (conj transaction {:account2 (get rule "account" default-account)})))
 
 (defn- line-to-transaction[line rules]
-  (let [fields (first (parse-csv line))
-        csv-rules (get rules "csv")
+  (let [csv-rules (get rules "csv")
+        delimiter (.charAt (get csv-rules "delimiter" ",") 0)
+        fields (first (parse-csv line :delimiter delimiter))
         currency (get csv-rules "currency")
         account (get csv-rules "processing_account")
         default-account (get csv-rules "default_account")
         date (get fields (get csv-rules "date"))
-        amount_in (get fields (get csv-rules "amount_in"))
-        amount_out (get fields (get csv-rules "amount_out"))
+        index-amount-in (get csv-rules "amount_in")
+        index-amount-out (get csv-rules "amount_out")
+        amount_in (get fields index-amount-in)
+        amount_out (get fields index-amount-out)
         desc (get fields (get csv-rules "description"))
         transaction {:date date :desc desc :currency currency :account1 account}
-        transaction-with-amount (associate-amounts transaction amount_in amount_out)
+        transaction-with-amount (if (= index-amount-in index-amount-out) (associate-amounts transaction amount_in) (associate-amounts transaction amount_in amount_out))
         complete-transaction (associate-account transaction-with-amount (get rules "transactions") default-account)]
     (write-transaction complete-transaction)))
 
