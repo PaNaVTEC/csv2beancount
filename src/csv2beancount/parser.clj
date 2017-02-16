@@ -6,45 +6,70 @@
             [yaml.core :as yaml])
   (:use clojure-csv.core))
 
-(defn- write-transaction [transaction]
-  (println (to-beancount transaction)))
+(defn- negative[x] (str "-" (str/trim x)))
 
-(defn associate-amounts ([transaction amount_in amount_out]
+(defn associated-amounts 
+  ([amount_in amount_out]
    (cond
-     (str/blank? amount_in) (conj transaction {:amount1 (str "-" (str/trim amount_out)) :amount2 amount_out })
-     (str/blank? amount_out) (conj transaction {:amount1 amount_in :amount2 (str "-" (str/trim amount_in)) })))
-  ([transaction amount] 
+     (str/blank? amount_in) {:amount1 (negative amount_out) :amount2 amount_out}
+     (str/blank? amount_out) {:amount1 amount_in :amount2 (negative amount_in)}))
+  ([amount] 
    (let [trimmed-amount (str/trim amount)
          is-negative (str/starts-with? trimmed-amount "-")
          amount2 (if is-negative (subs amount 1) (str "-" trimmed-amount))]
-    (conj transaction {:amount1 amount :amount2 amount2}))))
+     {:amount1 amount :amount2 amount2})))
 
-(defn- associate-account [transaction rules default-account]
-  (let [filtered-rules (filter #(.contains (:desc transaction) (key %)) rules)
+(defn- associated-account [description rules default-account]
+  (let [filtered-rules (filter #(.contains description (key %)) rules)
         rule (if (not-empty filtered-rules) (val (first filtered-rules)))]
-    (conj transaction {:account2 (get rule "account" default-account)})))
+    (get rule "account" default-account)))
 
-(defn- line-to-transaction[line rules]
-  (let [csv-rules (get rules "csv")
+(defn get-rules [rules-path]
+  (let [yaml (yaml/from-file rules-path)
+        csv-rules (get yaml "csv")
+        transactions (get yaml "transactions")
         delimiter (.charAt (get csv-rules "delimiter" ",") 0)
-        fields (first (parse-csv line :delimiter delimiter))
         currency (get csv-rules "currency")
         account (get csv-rules "processing_account")
         default-account (get csv-rules "default_account")
-        date (get fields (get csv-rules "date"))
-        index-amount-in (get csv-rules "amount_in")
-        index-amount-out (get csv-rules "amount_out")
-        amount_in (get fields index-amount-in)
-        amount_out (get fields index-amount-out)
-        desc (get fields (get csv-rules "description"))
-        transaction {:date date :desc desc :currency currency :account1 account}
-        transaction-with-amount (if (= index-amount-in index-amount-out) (associate-amounts transaction amount_in) (associate-amounts transaction amount_in amount_out))
-        complete-transaction (associate-account transaction-with-amount (get rules "transactions") default-account)]
-    (write-transaction complete-transaction)))
+        date-index (get csv-rules "date")
+        amount-in-index (get csv-rules "amount_in")
+        amount-out-index (get csv-rules "amount_out")
+        desc-index (get csv-rules "description")]
+    { :delimiter delimiter :currency currency :account account
+     :default-account default-account :date-index date-index
+     :amount-in-index amount-in-index
+     :amount-out-index amount-out-index
+     :desc-index desc-index :transactions transactions }))
 
-(defn convert-csv [file-path rules-path]
-  (let [rules (yaml/from-file rules-path)]
-    (with-open [rdr (io/reader file-path)]
-      (doseq [line (line-seq rdr)]
-        (line-to-transaction line rules)))))
+(defn- get-csv [csv-path delimiter] 
+  (parse-csv (io/reader csv-path) :delimiter delimiter))
+
+(defn- get-amounts[amount-in amount-out]
+  (if (= amount-in amount-out)
+    (associated-amounts amount-in)
+    (associated-amounts amount-in amount-out)))
+
+(defn- get-transaction[rules row]
+  (let [desc (get row (:desc-index rules))
+        {:keys [amount1 amount2]} 
+        (get-amounts (get row (:amount-in-index rules))
+                     (get row (:amount-out-index rules)))]
+    {:date (get row (:date-index rules))
+     :desc desc
+     :currency (:currency rules)
+     :account1 (:account rules)
+     :account2 (associated-account desc (:transactions rules) (:default-account rules))
+     :amount1 amount1
+     :amount2 amount2 }))
+
+(defn- get-transactions[csv-path rules-path]
+  (let [rules (get-rules rules-path)]
+    (for [row (get-csv csv-path (:delimiter rules))
+          :let [transaction (get-transaction rules row)]]
+       (to-beancount transaction))))
+
+(defn convert-csv [csv-path rules-path]
+  (doseq [x (get-transactions csv-path rules-path)]
+    (println x)))
 
