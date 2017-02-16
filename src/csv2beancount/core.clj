@@ -9,5 +9,8 @@
    ["-y" "--yaml Yaml" "Yaml Path"]
    ["-h" "--help"]])
 
+(defn -run-program[params]
+  (validate-params params (partial convert-csv)))
+
 (defn -main [& args]
-  (validate-params (parse-opts args cli-options) (partial convert-csv)))
+  (-run-program (parse-opts args cli-options)))

@@ -2,13 +2,8 @@
   (:require [clojure.test :refer :all]
             [csv2beancount.core :refer :all]
             [clojure.java.io :as io])
-  (:use clojure-csv.core))
-
-(deftest first-column-should-be-a-date
-  (let [rows (parse-csv "13/12/2089, Hola, Hola")
-        first-row (first rows)
-        first-field (first first-row)]
-    (is (= first-field "13/12/2089"))))
+  (:use clojure-csv.core)
+  (:use midje.sweet))
 
 (def help-output (str "  -c, --csv CSV    Csv Path\n"
                       "  -y, --yaml Yaml  Yaml Path\n"

@@ -2,7 +2,6 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
-
 (def ^:private required-options #{:csv :yaml})
 
 (defn- missing-required? [options]
@@ -19,4 +18,5 @@
     (:help options) (println summary)
     (missing-required? options) (println summary)
     (file-not-exists? (csv-path options)) (println "The file provided in --csv argument does not exist")
+    (file-not-exists? (rules-path options)) (println "The file provided in --yaml argument does not exist")
     :else (success (csv-path options) (rules-path options))))
