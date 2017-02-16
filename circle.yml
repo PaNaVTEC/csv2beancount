@@ -1,0 +1,21 @@
+dependencies:
+  pre:
+    - wget -O lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+    - chmod 755 lein
+    - ./lein -v
+    - ./lein deps
+    - go get -u github.com/tcnksm/ghr
+  cache_directories:
+    - ~/.m2
+    - ~/.lein
+test:
+  override:
+    - ./lein midje
+    - ./lein cloverage
+deployment:
+  uberjar:
+    branch: /^master$/
+    commands:
+      - ./lein uberjar
+      - mv target/*.jar $CIRCLE_ARTIFACTS/
+      - ghr -t "$GITHUB_TOKEN" -u "$CIRCLE_PROJECT_USERNAME" -r "$CIRCLE_PROJECT_REPONAME" "v1.0.$CIRCLE_BUILD_NUM" $CIRCLE_ARTIFACTS/ || true
