@@ -10,4 +10,5 @@
                  [io.forward/yaml "1.0.5"]
                  [clj-time "0.13.0"]]
   :main     csv2beancount.core
-  :profiles {:dev {:plugins [[lein-midje "3.2.1"]]}})
+  :profiles {:dev {:plugins [[lein-midje "3.2.1"]
+                             [lein-cloverage "1.0.9"]]}})
