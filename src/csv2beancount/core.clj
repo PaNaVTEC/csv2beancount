@@ -1,6 +1,6 @@
 (ns csv2beancount.core
   (:require [clojure.tools.cli :refer [parse-opts]]
-            [csv2beancount.beancountformatter :refer [convert-csv]]
+            [csv2beancount.parser :refer [convert-csv]]
             [csv2beancount.validator :refer [validate-params]])
   (:gen-class))
 
