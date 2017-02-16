@@ -14,6 +14,7 @@ test:
     - ./lein cloverage
 deployment:
   uberjar:
+    branch: /^.*/
     commands:
       - ./lein uberjar
       - mv target/* $CIRCLE_ARTIFACTS/
