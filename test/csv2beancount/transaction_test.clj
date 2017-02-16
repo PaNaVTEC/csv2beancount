@@ -9,7 +9,7 @@
             :desc-index 3
             :currency "GBP"
             :account "processing account"
-            :transactions {"CODU" {"account" "some" }}
+            :transactions {"CODU" {"account" "account" "comment" "comment" }}
             })
 
 (deftest get-transaction-with-minimal-rules
@@ -19,8 +19,9 @@
           :desc "CODU"
           :currency (:currency rules)
           :account1 (:account rules)
-          :account2 "some"
+          :account2 "account"
           :amount1 "123"
           :amount2 "-123"
+          :comment "comment"
           })) 
   )

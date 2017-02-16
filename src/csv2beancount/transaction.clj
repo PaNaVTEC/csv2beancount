@@ -15,13 +15,14 @@
      (str/blank? amount-in) {:amount1 (negative amount-out) :amount2 amount-out}
      (str/blank? amount-out) {:amount1 amount-in :amount2 (negative amount-in)}))
 
-(defn- associated-account [description rules default-account]
-  (let [filtered-rules (filter #(.contains description (key %)) rules)
+(defn- associated-rule [description transaction-rules]
+  (let [filtered-rules (filter #(.contains description (key %)) transaction-rules)
         rule (if (not-empty filtered-rules) (val (first filtered-rules)))]
-    (get rule "account" default-account)))
+    rule))
 
 (defn get-transaction[rules row]
   (let [desc (get row (:desc-index rules))
+        rule (associated-rule desc (:transactions rules))
         {:keys [amount1 amount2]} 
         (associated-amounts (get row (:amount-in-index rules))
                             (get row (:amount-out-index rules)))]
@@ -29,6 +30,7 @@
      :desc desc
      :currency (:currency rules)
      :account1 (:account rules)
-     :account2 (associated-account desc (:transactions rules) (:default-account rules))
+     :account2 (get rule "account" (:default-account rules))
+     :comment (get rule "comment" "")
      :amount1 amount1
      :amount2 amount2 }))

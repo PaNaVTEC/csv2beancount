@@ -18,7 +18,7 @@
         console-output (with-out-str (-run-program params))]
     (is (= console-output "The file provided in --csv does not exist\n"))))
 
-(def single-transaction (str "2017-02-08 * \"CODURANCE\"\n"
+(def single-transaction (str "2017-02-08 * \"CODURANCE\" \"Salary paid from employer\"\n"
                              "  Assets:UK:ClubLloyds 5000.00 GBP\n"
                              "  Income:UK:Codurance:Salary -5000.00 GBP\n\n"))
 
