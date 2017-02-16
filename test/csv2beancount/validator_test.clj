@@ -36,12 +36,12 @@
 (deftest when-csv-not-exists-should-output-that 
   (let [params {:options {:csv non-existing-file :yaml non-existing-file} :summary help-output }
         console-output (with-out-str (validate-params params success-function))]
-    (is (= console-output "The file provided in --csv argument does not exist\n"))))
+    (is (= console-output "The file provided in --csv does not exist\n"))))
 
 (deftest when-yaml-not-exists-should-output-that 
   (let [params {:options {:csv existing-file :yaml non-existing-file} :summary help-output }
         console-output (with-out-str (validate-params params success-function))]
-    (is (= console-output "The file provided in --yaml argument does not exist\n"))))
+    (is (= console-output "The file provided in --yaml does not exist\n"))))
 
 (deftest when-invoked-with-correct-arguments-should-execute-success-function
   (let [params {:options {:csv existing-file :yaml existing-file} :summary help-output }

@@ -13,10 +13,13 @@
 
 (defn- rules-path [options] (str/trim (:yaml options)))
 
+(defn- arg-not-exist[arg] 
+  (str "The file provided in --" (name arg) " does not exist"))
+
 (defn validate-params [{:keys [options _ summary _]} success]
   (cond
     (:help options) (println summary)
     (missing-required? options) (println summary)
-    (file-not-exists? (csv-path options)) (println "The file provided in --csv argument does not exist")
-    (file-not-exists? (rules-path options)) (println "The file provided in --yaml argument does not exist")
+    (file-not-exists? (csv-path options)) (println (arg-not-exist :csv))
+    (file-not-exists? (rules-path options)) (println (arg-not-exist :yaml))
     :else (success (csv-path options) (rules-path options))))

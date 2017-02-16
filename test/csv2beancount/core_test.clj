@@ -17,7 +17,7 @@
   (let [non-existing-file "whatever_non_existing_file.txt"
         params {:options {:csv non-existing-file :yaml non-existing-file} :summary help-output }
         console-output (with-out-str (-run-program params))]
-    (is (= console-output "The file provided in --csv argument does not exist\n"))))
+    (is (= console-output "The file provided in --csv does not exist\n"))))
 
 (def single-transaction (str "2017-02-08 * \"CODURANCE\"\n"
                              "  Assets:UK:ClubLloyds 5000.00 GBP\n"
