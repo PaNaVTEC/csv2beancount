@@ -2,7 +2,6 @@
   (:require [clojure.test :refer :all]
             [csv2beancount.core :refer :all]
             [clojure.java.io :as io])
-  (:use clojure-csv.core)
   (:use midje.sweet))
 
 (def help-output (str "  -c, --csv CSV    Csv Path\n"

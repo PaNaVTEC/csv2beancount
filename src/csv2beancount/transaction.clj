@@ -10,6 +10,7 @@
 
 (defn- associated-amounts [amount-in amount-out]
    (cond
+     (and (str/blank? amount-in) (str/blank? amount-out)) {:amount1 "" :amount2 ""}
      (= amount-in amount-out) {:amount1 amount-in :amount2 (toggle-sign amount-in)}
      (str/blank? amount-in) {:amount1 (negative amount-out) :amount2 amount-out}
      (str/blank? amount-out) {:amount1 amount-in :amount2 (negative amount-in)}))
