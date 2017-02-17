@@ -18,19 +18,21 @@
         date-index (get csv-rules "date")
         amount-in-index (get csv-rules "amount_in")
         amount-out-index (get csv-rules "amount_out")
+        skip-lines (Integer. (get csv-rules "skip" 0))
         desc-index (get csv-rules "description")]
     { :delimiter delimiter :currency currency :account account
      :default-account default-account :date-index date-index
      :amount-in-index amount-in-index
      :amount-out-index amount-out-index
-     :desc-index desc-index :transactions transactions }))
+     :skip-lines skip-lines :desc-index desc-index 
+     :transactions transactions }))
 
 (defn- get-csv [csv-path delimiter] 
   (parse-csv (io/reader csv-path) :delimiter delimiter))
 
 (defn- get-transactions[csv-path rules-path]
   (let [rules (get-rules rules-path)]
-    (for [row (get-csv csv-path (:delimiter rules))
+    (for [row (drop (:skip-lines rules) (get-csv csv-path (:delimiter rules)))
           :let [transaction (get-transaction rules row)]]
        (to-beancount transaction))))
 
