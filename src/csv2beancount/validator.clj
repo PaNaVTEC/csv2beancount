@@ -16,10 +16,12 @@
 (defn- arg-not-exist[arg] 
   (str "The file provided in --" (name arg) " does not exist"))
 
-(defn validate-params [{:keys [options _ summary _]} success]
+(defn validate-params [{:keys [options _ summary _]}]
   (cond
     (:help options) (println summary)
     (missing-required? options) (println summary)
     (file-not-exists? (csv-path options)) (println (arg-not-exist :csv))
     (file-not-exists? (rules-path options)) (println (arg-not-exist :yaml))
-    :else (success (csv-path options) (rules-path options))))
+    :else {:csv-path (csv-path options) 
+           :yaml-path (rules-path options)}))
+
