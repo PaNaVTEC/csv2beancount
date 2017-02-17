@@ -12,11 +12,11 @@
 (defn- print-transactions [transactions]
  (doseq [x transactions] (println x)))
 
-(defn -run-program [params]
+(defn run-program [params]
   (some-> params
           validate-params
           convert-csv
           print-transactions))
 
 (defn -main [& args]
-  (-run-program (parse-opts args cli-options)))
+  (run-program (parse-opts args cli-options)))
