@@ -25,3 +25,10 @@
         yml-path (res-path "skip_codurance_desc.yaml")
         transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
     (is (= [] transactions))))
+
+(deftest yaml-with-custom-date-format-should-interpret-it 
+  (let [csv-path (res-path "single_line_transaction_custom_date_format.csv")
+        yml-path (res-path "custom_date_format.yaml")
+        transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
+    (is (= '("2017-10-10 * \"DESC\"\n  Assets:UK:ClubLloyds 123 GBP\n  Expenses:Unknown -123 GBP\n")
+           transactions))))
