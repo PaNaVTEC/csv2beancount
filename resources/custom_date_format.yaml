@@ -1,0 +1,12 @@
+---
+csv:
+  date: 0
+  amount_in: 1
+  amount_out: 1
+  description: 2
+  processing_account: "Assets:UK:ClubLloyds"
+  default_account: "Expenses:Unknown"
+  currency: "GBP"
+  date_format: "dd MMM yyyy"
+transactions:
+
