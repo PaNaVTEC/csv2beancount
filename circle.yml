@@ -14,8 +14,8 @@ test:
     - ./lein cloverage
 deployment:
   uberjar:
-    tag: /v[0-9]+(\.[0-9]+)*/
+    branch: /^master$/
     commands:
-      - ./lein uberjar
+      - ./lein with-profile production uberjar
       - mv target/*standalone.jar $CIRCLE_ARTIFACTS/
-      - ghr -t "$GITHUB_TOKEN" -u "$CIRCLE_PROJECT_USERNAME" -r "$CIRCLE_PROJECT_REPONAME" "$(ls target/ | grep standalone | awk -F'-' '{print $2}')" $CIRCLE_ARTIFACTS/ || true
+      - ghr -t "$GITHUB_TOKEN" -u "$CIRCLE_PROJECT_USERNAME" -r "$CIRCLE_PROJECT_REPONAME" "$(ls $CIRCLE_ARTIFACTS/ | grep standalone | awk -F'-' '{print $2}')" $CIRCLE_ARTIFACTS/ || true
