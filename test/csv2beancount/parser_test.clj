@@ -10,5 +10,5 @@
 (deftest parser-with-no-transactions-should-print-empty
   (let [csv-path (res-path "empty_transactions.csv")
         yml-path (res-path "simple_transaction_rules.yaml")
-        output (with-out-str (convert-csv {:csv-path csv-path :yaml-path yml-path}))]
-   (is (= "" output))))
+        transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
+   (is (= [] transactions))))

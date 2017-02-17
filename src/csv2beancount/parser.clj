@@ -35,6 +35,5 @@
        (to-beancount transaction))))
 
 (defn convert-csv [{:keys [csv-path yaml-path]}]
-  (doseq [x (get-transactions csv-path yaml-path)]
-    (println x)))
+  (get-transactions csv-path yaml-path))
 
