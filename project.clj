@@ -1,4 +1,4 @@
-(defproject csv2beancount "1.0.3"
+(defproject csv2beancount "1.0.4"
   :description "A csv to beancount importer"
   :url "http://panavtec.me/"
   :license {:name "Eclipse Public License"
