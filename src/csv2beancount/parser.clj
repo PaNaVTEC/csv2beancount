@@ -34,7 +34,6 @@
           :let [transaction (get-transaction rules row)]]
        (to-beancount transaction))))
 
-(defn convert-csv [csv-path rules-path]
-  (doseq [x (get-transactions csv-path rules-path)]
-    (println x)))
+(defn convert-csv [{:keys [csv-path yaml-path]}]
+  (get-transactions csv-path yaml-path))
 
