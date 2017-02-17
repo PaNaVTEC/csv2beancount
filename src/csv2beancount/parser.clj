@@ -24,16 +24,19 @@
      :default-account default-account :date-index date-index
      :amount-in-index amount-in-index
      :amount-out-index amount-out-index
-     :skip-lines skip-lines :desc-index desc-index 
+     :skip-lines skip-lines :desc-index desc-index
      :transactions transactions }))
 
 (defn- get-csv [csv-path delimiter] 
   (parse-csv (io/reader csv-path) :delimiter delimiter))
 
 (defn- get-transactions[csv-path rules-path]
-  (let [rules (get-rules rules-path)]
-    (for [row (drop (:skip-lines rules) (get-csv csv-path (:delimiter rules)))
-          :let [transaction (get-transaction rules row)]]
+  (let [rules (get-rules rules-path)
+        skip-lines (:skip-lines rules)
+        delimiter (:delimiter rules)]
+    (for [row (drop skip-lines (get-csv csv-path delimiter))
+          :let [transaction (get-transaction rules row)]
+          :when (some? transaction)]
        (to-beancount transaction))))
 
 (defn convert-csv [{:keys [csv-path yaml-path]}]

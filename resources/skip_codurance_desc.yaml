@@ -1,0 +1,13 @@
+---
+csv:
+  date: 0
+  amount_in: 5
+  amount_out: 6
+  description: 4
+  processing_account: "Assets:UK:ClubLloyds"
+  default_account: "Expenses:Unknown"
+  currency: "GBP"
+transactions:
+  CODU:
+    skip: true
+
