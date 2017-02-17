@@ -23,9 +23,11 @@
 (defn get-transaction[rules row]
   (let [desc (get row (:desc-index rules))
         rule (associated-rule desc (:transactions rules))
+        skip-transaction (get rule "skip" false)
         {:keys [amount1 amount2]} 
         (associated-amounts (get row (:amount-in-index rules))
                             (get row (:amount-out-index rules)))]
+    (if skip-transaction nil
     {:date (get row (:date-index rules))
      :desc desc
      :currency (:currency rules)
@@ -33,4 +35,4 @@
      :account2 (get rule "account" (:default-account rules))
      :comment (get rule "comment" "")
      :amount1 amount1
-     :amount2 amount2 }))
+     :amount2 amount2 })))

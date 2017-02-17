@@ -19,3 +19,9 @@
         transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
     (is (= '("2017-10-10 * \"DESC\"\n  Assets:UK:ClubLloyds 123 GBP\n  Expenses:Unknown -123 GBP\n")
            transactions))))
+
+(deftest rule-with-skip-should-skip-transaction
+  (let [csv-path (res-path "single_line_transaction.csv")
+        yml-path (res-path "skip_codurance_desc.yaml")
+        transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
+    (is (= [] transactions))))
