@@ -32,3 +32,10 @@
         transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
     (is (= '("2017-10-10 * \"DESC\"\n  Assets:UK:ClubLloyds 123 GBP\n  Expenses:Unknown -123 GBP\n")
            transactions))))
+
+(deftest yaml-with-toggle-sign-should-reverse-it 
+  (let [csv-path (res-path "toggle_sign.csv")
+        yml-path (res-path "toggle_sign.yaml")
+        transactions (convert-csv {:csv-path csv-path :yaml-path yml-path})]
+    (is (= '("2017-10-10 * \"DESC\"\n  Assets:UK:ClubLloyds 123 GBP\n  Expenses:Unknown -123 GBP\n")
+           transactions))))
