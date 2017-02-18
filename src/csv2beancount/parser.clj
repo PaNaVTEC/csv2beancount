@@ -20,13 +20,14 @@
         amount-out-index (get csv-rules "amount_out")
         skip-lines (Integer. (get csv-rules "skip" 0))
         date-format (get csv-rules "date_format" "dd/MM/yyyy")
+        toggle-sign (get csv-rules "toggle_sign" false)
         desc-index (get csv-rules "description")]
     { :delimiter delimiter :currency currency :account account
      :default-account default-account :date-index date-index
      :amount-in-index amount-in-index
      :amount-out-index amount-out-index
      :skip-lines skip-lines :desc-index desc-index :date-format date-format
-     :transactions transactions }))
+     :toggle-sign toggle-sign :transactions transactions }))
 
 (defn- get-csv [csv-path delimiter] 
   (parse-csv (io/reader csv-path) :delimiter delimiter))
