@@ -1,6 +1,7 @@
 (ns csv2beancount.parser-test
   (:require [clojure.test :refer :all]
             [csv2beancount.parser :refer :all]
+            [cats.monad.either :refer [left right]]
             [clojure.java.io :as io])
   (:use midje.sweet))
 
@@ -11,7 +12,7 @@
   `(let [csv-path# (res-path ~csv-param)
          yaml-path# (res-path ~yaml-param)
          transactions# (convert-csv {:csv-path csv-path# :yaml-path yaml-path#})]
-     (is (= ~expectation transactions#))))
+     (is (= (right ~expectation) transactions#))))
 
 (deftest parser-with-no-transactions-should-print-empty
   (parsing-with-args-should "empty_transactions.csv"
