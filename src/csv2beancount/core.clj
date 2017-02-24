@@ -1,7 +1,7 @@
 (ns csv2beancount.core
   (:require [clojure.tools.cli :refer [parse-opts]]
             [csv2beancount.parser :refer [convert-csv]]
-            [cats.monad.either :as either]
+            [cats.monad.either :as e]
             [cats.core :as c]
             [csv2beancount.validator :refer [validate-params]])
   (:gen-class))
@@ -17,9 +17,7 @@
 (defn- print-error [error] (println error))
 
 (defn- printresult [mresult]
-  (if (either/left? mresult)
-    (print-error @mresult)
-    (print-transactions @mresult)))
+  (if (e/left? mresult) (print-error @mresult) (print-transactions @mresult)))
 
 (defn run-program [params]
   (-> (c/alet [validated-params (validate-params params)
